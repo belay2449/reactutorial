@@ -1,0 +1,90 @@
+var Create = React.createClass({
+  render: function () {
+
+    var array = new Array(parseFloat(this.props.count));
+    for (var i = 0; i < array.length; i++) {
+      array[i] = i;
+    };
+    
+    var rand = function() {
+      return Math.round(Math.random() * 255);
+    };
+    var randColor = function() {
+      return {
+        background: 'rgb(' + rand() + ',' + rand() + ',' + rand() + ')'
+      }  
+    }
+      
+    var divs  = array.map(function(val, index) {
+      return (
+        <div style={randColor()} className="box" id={index}></div>
+      )
+    }, this);
+    
+    return (
+      <div className="container">
+        {divs}
+      </div>
+     )
+  }
+  
+});
+          
+var Main = React.createClass({
+  getInitialState: function () {
+    return {
+      count: 5,
+      subtract: false
+    }
+  },
+  handleChange: function(event) {
+    if (!isNaN(event.target.value)) {
+      this.setState({count: event.target.value});
+    }
+  },
+  autoPlay: function() {
+    
+    var play = setInterval(function() {
+      
+      var count = this.state.count;
+      var newCount;
+      
+      if (count === 75) {
+        this.setState({
+          subtract: true
+        })
+      }
+      else if (count === 0) {
+        this.setState({
+          subtract: false
+        })
+      }
+      
+      if (this.state.subtract) {
+        newCount = count - 1;
+      }
+      else if (!this.state.subtract) {
+        newCount = count + 1;
+      }
+      
+      this.setState({
+        count: newCount
+      });
+      
+    }.bind(this), 40);
+  },
+  
+  render: function () {    
+    return (
+      <div className="mainContainer">
+        <Create count={this.state.count}/>
+      </div>
+    )
+  },
+  componentDidMount: function() {
+    this.autoPlay();
+  }
+  
+});
+
+ReactDOM.render(<Main />, document.getElementById('main'));
